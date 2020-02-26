@@ -12,7 +12,11 @@ wsgiref
 
 urllib
 
-import json,base64,requests
+json
+
+base64
+
+requests
 
 # 2.mypcqq框架需求
 须打开转发接口，并设置set.ini
