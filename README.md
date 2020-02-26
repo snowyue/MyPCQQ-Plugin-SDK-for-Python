@@ -25,6 +25,8 @@ requests
 enable=1															//开关
 target=https://www.baidu.com					//转发目标，确保可信
 whitelist=0.0.0.0 127.0.0.1						//IP白名单，添加后才能请求接口，以空格或逗号分割
+# # 运行
+直接运行run.py
 
 # # 文档与MPQ下载
 MPQ : http://t.cn/ROII2jI
