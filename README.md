@@ -25,3 +25,8 @@ whitelist=0.0.0.0 127.0.0.1						//IP白名单，添加后才能请求接口，�
 # # API接口
 
 暂时只编写发送测试接口，因原理过于简单，其他未编写
+
+# # 演示
+![image](https://github.com/snowyue/python-mypcqq/blob/master/%E8%B0%83%E8%AF%95%E6%88%AA%E5%9B%BE.png?raw=true)
+![image](https://github.com/snowyue/python-mypcqq/blob/master/框架截图.png?raw=true)
+![image](https://github.com/snowyue/python-mypcqq/blob/master/群截图.png?raw=true)
