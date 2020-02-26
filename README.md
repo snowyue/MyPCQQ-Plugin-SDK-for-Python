@@ -6,9 +6,11 @@
 
 # # 需求
 # 1.python需求
-from wsgiref.simple_server import make_server
+python3.x+任意ide(不用也可以)
 
-from urllib import parse
+wsgiref
+
+urllib
 
 import json,base64,requests
 
