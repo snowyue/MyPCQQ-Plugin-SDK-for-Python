@@ -27,7 +27,7 @@ def index(environ, start_response):
         content = base64.b64decode(json_content['Content']).decode()
         #print('Robot：', json_content['Robot'])  # 调试输出 机器人QQ号码
         print("来自好友的消息：",content)  # 调试输出 解码后的信息正文
-    elif(MsgType == "2" and Source == "561024983"):
+    elif(MsgType == "2" and Source == "5613"):
         content = base64.b64decode(json_content['Content']).decode()
         #print('Robot：', json_content['Robot'])  # 调试输出 机器人QQ号码
         print('来自群友的消息：',content)  # 调试输出 解码后的信息正文
