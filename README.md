@@ -19,3 +19,7 @@ target=https://www.baidu.com					//转发目标，确保可信
 whitelist=0.0.0.0 127.0.0.1						//IP白名单，添加后才能请求接口，以空格或逗号分割
 
 文档：https://www.yuque.com/mpq/docs/transpond
+
+# # API接口
+
+暂时只编写发送测试接口，因原理过于简单，其他未编写
