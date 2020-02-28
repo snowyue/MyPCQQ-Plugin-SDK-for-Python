@@ -36,6 +36,6 @@ MPQ : http://t.cn/ROII2jI
 暂时只编写发送测试接口，因原理过于简单，其他未编写
 
 # # 演示
-![image](https://github.com/snowyue/python-mypcqq/blob/master/image/调试截图_1.0.1?raw=true)
+![image](https://github.com/snowyue/python-mypcqq/blob/master/image/调试截图_1.0.1.png?raw=true)
 ![image](https://github.com/snowyue/python-mypcqq/blob/master/image/框架测试截图_1.0.1.png?raw=true)
 ![image](https://github.com/snowyue/python-mypcqq/blob/master/image/群测试截图_1.0.1.png?raw=true)
