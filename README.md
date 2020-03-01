@@ -2,7 +2,9 @@
 写个机器人的python版本插件，当作个人学习python的总结
 
 #需求
+
 1.python需求
+
 python3.x+任意ide(不用也可以)
 ```
 wsgiref，
