@@ -7,11 +7,8 @@
 
 python3.x+任意ide(不用也可以)
 ```
-wsgiref，
-urllib，
-json，
-base64，
-requests，
+注意：run.py需要：wsgiref，urllib，json，base64，requests，
+注意：uvicorn.py需要：uvicorn，urllib，json，base64，requests，
 ```
 2.mypcqq框架需求
 须打开转发接口，并设置set.ini
@@ -30,10 +27,13 @@ whitelist=0.0.0.0 127.0.0.1				//IP白名单，添加后才能请求接口，以
 MPQ下载 : http://t.cn/ROII2jI
 文档目录：https://www.yuque.com/mpq/docs/transpond
 ```
-# API接口
-
+# 更新记录
+```
+v1.01
+由于个人编程能力不到位，无法添加好友，更换web框架为uvicorn，原始版本继续作为参考使用
+v1.00
 暂时只编写发送测试接口，其他未编写
-
+```
 # 演示
 ![image](https://github.com/snowyue/python-mypcqq/blob/master/image/调试截图_1.0.1.png?raw=true)
 ![image](https://github.com/snowyue/python-mypcqq/blob/master/image/框架测试截图_1.0.1.png?raw=true)
