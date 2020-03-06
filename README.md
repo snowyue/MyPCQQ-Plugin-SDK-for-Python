@@ -1,6 +1,5 @@
-#python-mypcqq
 写个机器人的python版本插件，当作个人学习python的总结
-
+（技术含量不高，请各位多多包涵。。。）
 # 需求
 
 1.python需求
