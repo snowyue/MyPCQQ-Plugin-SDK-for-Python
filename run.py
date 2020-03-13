@@ -68,17 +68,19 @@ class Pympq(object):
         elif(environ.get("REQUEST_METHOD")=="POST"):
             request_body = environ["wsgi.input"].read(int(environ.get("CONTENT_LENGTH", 0)))#获取聊天信息
             html=str(request_body,'utf-8') #将以字节为单位的bytes转化为python unicode编码
-            m_info = self.Mpq_main(html)
-            response_body = json.dumps(m_info)
-            print(1111,response_body)
-        if MPQ.Ret == 1:
+            self.Mpq_main(html)
+            #response_body = json.dumps(m_info)
+#            print(1111,m_info,m_info.encode("Utf-8"))
+            #return m_info
+
+        if self.Ret == 1:
             return [b'{"Ret":"10","Msg":""}']
         else:
             return [b'{"Ret":"0","Msg":""}']
 
     def Mpq_main(self,environ):
         json_content = json.loads(environ)  # 字典格式化
-        print(json_content)
+        #print(json_content)
         if (self.Mpq_index == 0):
             self.Port = json_content['Port']            # 监听的服务端口，范围为 8010-8020
             self.Pid = json_content['Pid']              # 进程ID
@@ -100,6 +102,9 @@ class Pympq(object):
             self.Sender = json_content['Sender']        # 主动触发对象
             self.Receiver = json_content['Receiver']    # 被动接收对象
             self.Content = self.Mpq_base64_decode(json_content['Content'])      # 正文内容，需要 base64解码
+        if (self.MsgType == "-1"):
+            print("心跳包，跳过处理。。。")
+            return self.Mpq_ret("0")
         if (self.MsgType == "1"):
             print('Robot：', self.Robot)  # 调试输出 机器人QQ
             print('MsgType：', self.MsgType)  # 调试输出 信息类型
@@ -107,8 +112,8 @@ class Pympq(object):
             print("Sender：", self.Sender)  # 调试输出 主动触发对象
             print("Receiver：", self.Receiver)  # 调试输出 被动接收对象
             print("来自好友的消息：", self.Content)  # 调试输出 解码后的信息正文
-            return
-        elif (self.MsgType == "2" and self.Source == "5833"):
+            return self.Mpq_ret("0")
+        elif (self.MsgType == "2" and self.Source == "561024983"):
             print('Robot：', self.Robot)  # 调试输出 机器人QQ
             print('MsgType：', self.MsgType)  # 调试输出 信息类型
             print('Source：', self.Source)  # 调试输出 信息来源
@@ -117,7 +122,7 @@ class Pympq(object):
             print("来自群友的消息：", self.Content)  # 调试输出 解码后的信息正文
             if (self.Content == "测试回复"):
                 self.Mpq_Sendmsg(self.Robot, self.Source, self.Sender, "测试信息666",2)
-            return
+            return self.Mpq_ret("0")
         else:
             return self.Mpq_msgtype(self.MsgType)
         return self.Mpq_ret("0")
@@ -128,8 +133,8 @@ class Pympq(object):
             "Ret": "10", // 返回值，10 = 默认确定\同意，20 = 默认取消\拒绝
             "Msg": "" // 返回信息，用于处理拒绝加群拒绝加好友的理由回传
             }"""
-        txt = {"Ret": "", "Msg": ""}
-        txt["Ret"] = ret
+
+        txt = {"Ret":"{}".format(ret), "Msg":""}
         if ret == "10":
             self.Ret = 1
         else:
@@ -138,93 +143,63 @@ class Pympq(object):
             txt["Msg"] = msg
         else:
             txt["Msg"] = ""
-        return json.dumps(txt)
+        #print(json.dumps(txt).encode(encoding="utf-8"))
+        return [json.dumps(txt).encode(encoding="utf-8")]
     def Mpq_msgtype(self,Msgtype):
+        print('Robot：', self.Robot)  # 调试输出 机器人QQ
+        print('MsgType：', self.MsgType)  # 调试输出 信息类型
+        print('Source：', self.Source)  # 调试输出 信息来源
+        print("Sender：", self.Sender)  # 调试输出 主动触发对象
+        print("Receiver：", self.Receiver)  # 调试输出 被动接收对象
         if (Msgtype == "1001" ):
-            print('Robot：', self.Robot)  # 调试输出 机器人QQ
-            print('MsgType：', self.MsgType)  # 调试输出 信息类型
-            print('Source：', self.Source)  # 调试输出 信息来源
-            print("Sender：", self.Sender)  # 调试输出 主动触发对象
-            print("Receiver：", self.Receiver)  # 调试输出 被动接收对象
             print("验证消息", self.Content)  # 调试输出 解码后的信息正文
             print(self.Sender, "添加好友~~")  # 调试输出
             if (self.Content == "我是机器人"):
-                #self.Mpq_Api_HandleFriendRequestAsyncA(self.Robot, self.Source, "10", "")
                 return self.Mpq_ret("10")
-            return self.Mpq_ret("20")
-            #self.Mpq_Sendmsg(self.Robot, self.Source, self.Sender, "欢迎[name]加入[gname]\\n审批者："+self.Sender)
-        elif (Msgtype == "2001" and self.Source == "5833"):
-            print('Robot：', self.Robot)  # 调试输出 机器人QQ
-            print('MsgType：', self.MsgType)  # 调试输出 信息类型
-            print('Source：', self.Source)  # 调试输出 信息来源
-            print("Sender：", self.Sender)  # 调试输出 主动触发对象
-            print("Receiver：", self.Receiver)  # 调试输出 被动接收对象
+            
+        elif (Msgtype == "2001" ):
             print(self.Sender, "申请入群~~")  # 调试输出
             self.Mpq_Sendmsg(self.Robot, self.Source, self.Sender, "欢迎[name]加入[gname]\\n审批者："+self.Sender)
-        elif (Msgtype == "2002" and self.Source == "5833"):
-            print('Robot：', self.Robot)  # 调试输出 机器人QQ
-            print('MsgType：', self.MsgType)  # 调试输出 信息类型
-            print('Source：', self.Source)  # 调试输出 信息来源
-            print("Sender：", self.Sender)  # 调试输出 主动触发对象
-            print("Receiver：", self.Receiver)  # 调试输出 被动接收对象
+            
+        elif (Msgtype == "2002" and self.Source == "5613"):
             print(self.Receiver,"被邀请加入群~")  # 调试输出
             self.Mpq_Sendmsg(self.Robot, self.Source, self.Sender, "[name]被邀请加入某群~~")
-        elif (Msgtype == "2003" and self.Source == "5833"):
-            print('Robot：', self.Robot)  # 调试输出 机器人QQ
-            print('MsgType：', self.MsgType)  # 调试输出 信息类型
-            print('Source：', self.Source)  # 调试输出 信息来源
-            print("Sender：", self.Sender)  # 调试输出 主动触发对象
-            print("Receiver：", self.Receiver)  # 调试输出 被动接收对象
+        
+        elif (Msgtype == "2003" and self.Source == "5613"):
             print(" 我被",self.Sender,"邀请加入群")  # 调试输出
-            self.Mpq_Sendmsg(self.Robot, self.Source, self.Sender, "[name]被邀请加入某群~~")
-        elif (Msgtype == "2005" and self.Source == "5833"):
-            print('Robot：', self.Robot)  # 调试输出 机器人QQ
-            print('MsgType：', self.MsgType)  # 调试输出 信息类型
-            print('Source：', self.Source)  # 调试输出 信息来源
-            print("Sender：", self.Sender)  # 调试输出 主动触发对象
-            print("Receiver：", self.Receiver)  # 调试输出 被动接收对象
+            self.Mpq_Sendmsg(self.Robot, self.Source, self.Sender, "被{}邀请加入某群~~")
+        
+        elif (Msgtype == "2005"):
             print(self.Receiver,"被批准加入了群~")  # 调试输出
-            self.Mpq_Sendmsg(self.Robot, self.Source, self.Sender, "[name]被管理员批准加入~~")
-        elif (Msgtype == "2006" and self.Source == "5833"):
-            print('Robot：', self.Robot)  # 调试输出 机器人QQ
-            print('MsgType：', self.MsgType)  # 调试输出 信息类型
-            print('Source：', self.Source)  # 调试输出 信息来源
-            print("Sender：", self.Sender)  # 调试输出 主动触发对象
-            print("Receiver：", self.Receiver)  # 调试输出 被动接收对象
+            send_name = self.Mpq_Api_GetNameCard(self.Robot, self.Source, self.Sender)
+            re_name = self.Mpq_Api_GetNick(self.Robot, self.Receiver)
+            self.Mpq_Sendmsg(self.Robot, self.Source, self.Sender, "欢迎{}({})加入[gname]\\n管理员：{}({})".format(re_name,self.Receiver,send_name,self.Sender))
+        
+        elif (Msgtype == "2006" ):
             print(self.Sender," 退出群~")  # 调试输出
-            self.Mpq_Sendmsg(self.Robot, self.Source, self.Sender, "[name]退出本群~~")
-        elif (Msgtype == "2007" and self.Source == "5833"):
-            print('Robot：', self.Robot)  # 调试输出 机器人QQ
-            print('MsgType：', self.MsgType)  # 调试输出 信息类型
-            print('Source：', self.Source)  # 调试输出 信息来源
-            print("Sender：", self.Sender)  # 调试输出 主动触发对象
-            print("Receiver：", self.Receiver)  # 调试输出 被动接收对象
+            re_name = self.Mpq_Api_GetNameCard(self.Robot, self.Source, self.Sender)
+            self.Mpq_Sendmsg(self.Robot, self.Source, self.Sender, "{}({})退出本群~~".format(re_name,self.Sender))
+        
+        elif (Msgtype == "2007"):
             print(self.Receiver," 被管理移除群~")  # 调试输出
-            self.Mpq_Sendmsg(self.Robot, self.Source, self.Sender, "[name]被移除本群~~")
-        elif (Msgtype == "2008" and self.Source == "5833"):
-            print('Robot：', self.Robot)  # 调试输出 机器人QQ
-            print('MsgType：', self.MsgType)  # 调试输出 信息类型
-            print('Source：', self.Source)  # 调试输出 信息来源
-            print("Sender：", self.Sender)  # 调试输出 主动触发对象
-            print("Receiver：", self.Receiver)  # 调试输出 被动接收对象
+            send_name = self.Mpq_Api_GetNameCard(self.Robot, self.Source, self.Sender)
+            re_name = self.Mpq_Api_GetNick(self.Robot, self.Receiver)
+            self.Mpq_Sendmsg(self.Robot, self.Source, self.Sender, "{}({})被{}({})移除本群~~\\n".format(re_name,self.Receiver,send_name, self.Sender))
+        
+        elif (Msgtype == "2008"):
             print(self.Sender,"某群被解散~")  # 调试输出
-            self.Mpq_Sendmsg(self.Robot, self.Source, self.Sender, "[gname]被解散~~")
-        elif (Msgtype == "2009" and self.Source == "5833"):
-            print('Robot：', self.Robot)  # 调试输出 机器人QQ
-            print('MsgType：', self.MsgType)  # 调试输出 信息类型
-            print('Source：', self.Source)  # 调试输出 信息来源
-            print("Sender：", self.Sender)  # 调试输出 主动触发对象
-            print("Receiver：", self.Receiver)  # 调试输出 被动接收对象
+        
+        elif (Msgtype == "2009"):
             print(self.Sender," 成为管理员~")  # 调试输出
-            self.Mpq_Sendmsg(self.Robot, self.Source, self.Sender, "[name]和群主达成了不可告人的交易成为了本群管理员~~")
-        elif(Msgtype == "2010" and self.Source == "5833"):
-            print('Robot：', self.Robot)  # 调试输出 机器人QQ
-            print('MsgType：', self.MsgType)  # 调试输出 信息类型
-            print('Source：', self.Source)  # 调试输出 信息来源
-            print("Sender：", self.Sender)  # 调试输出 主动触发对象
-            print("Receiver：", self.Receiver)  # 调试输出 被动接收对象
+            re_name = self.Mpq_Api_GetNameCard(self.Robot, self.Source, self.Receiver)
+            self.Mpq_Sendmsg(self.Robot, self.Source, self.Sender, "[name]({})和群主达成了不可告人的交易成为了本群管理员~~".format(self.Receiver))
+        
+        elif(Msgtype == "2010"):
             print(self.Sender," 取消管理员权限~")  # 调试输出
-            self.Mpq_Sendmsg(self.Robot, self.Source, self.Sender, "[name]和群主交易达成失败，被取消管理员权限~")
+            re_name = self.Mpq_Api_GetNameCard(self.Robot, self.Source, self.Receiver)
+            self.Mpq_Sendmsg(self.Robot, self.Source, self.Sender, "[name]({})和群主交易达成失败，被取消管理员权限~".format(self.Receiver))
+        return self.Mpq_ret("20")
+    
     def Mpq_Api_HandleFriendRequestAsyncA(self,Robotqq,Source,type,text,mode=2):
         #Api_HandleFriendRequestAsyncA, 仅商用版可用 异步处理被加好友事件 在事件1001下返回值需>30 如50 以强制忽略且确保无其他插件处理
         #.参数 参_响应的QQ, 文本型, , 机器人QQ
@@ -243,6 +218,40 @@ class Pympq(object):
             tt = requests.post("http://127.0.0.1:"+self.Port ,data=get_text + api_text)
             print(tt.text)
         return self.Error(tt.text)
+    def Mpq_Api_GetNameCard(self,Robotqq,Source,qq,mode=1):
+        """Api_GetNameCard, 文本型, 取群名片
+            .参数 响应的QQ, 文本型
+            .参数 群号, 文本型
+            .参数 QQ, 文本型
+            """
+        api_text = parse.quote("Api_GetNameCard({},{},{})".format("'" + Robotqq + "'",
+                                                                     "'" + Source + "'",
+                                                                     "'" + qq + "'"))
+        if (mode ==1):
+            get_text = "/?QQ=" + Robotqq + "&API="
+            tt = requests.get("http://127.0.0.1:" +self.Port+ get_text + api_text)
+        else:
+            get_text = "QQ=" + Robotqq + "&API="
+            tt = requests.post("http://127.0.0.1:"+self.Port ,data=get_text + api_text)
+        json_content = json.loads(tt.text)  # 字典格式化
+        print("Api_GetNameCard",api_text , self.Mpq_base64_decode(json_content["Data"]))
+        return (self.Mpq_base64_decode(json_content["Data"]))
+    def Mpq_Api_GetNick(self,Robotqq,qq,mode=2):
+        """
+            Api_GetNick, 文本型, 取用户名
+            .参数 QQ, 文本型
+            """
+        api_text = parse.quote("Api_GetNick({})".format("'" + qq + "'"))
+        if (mode ==1):
+            get_text = "/?QQ=" + Robotqq + "&API="
+            tt = requests.get("http://127.0.0.1:" +self.Port+ get_text + api_text)
+        else:
+            get_text = "QQ=" + Robotqq + "&API="
+            tt = requests.post("http://127.0.0.1:"+self.Port ,data=get_text + api_text)
+        json_content = json.loads(tt.text)  # 字典格式化
+        #print("Api_GetNick",api_text,self.Mpq_base64_decode(json_content["Data"]))
+        return(self.Mpq_base64_decode(json_content["Data"]))
+        #return self.Error(tt.text)
     def Mpq_Sendmsg(self,Robotqq,Source,Sender,text,mode=2):
         api_text = parse.quote("Api_SendMsg({},2,0,{},{},{})".format("'" + Robotqq + "'",
                                                                      "'" + Source + "'",
