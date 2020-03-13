@@ -113,7 +113,7 @@ class Pympq(object):
             print("Receiver：", self.Receiver)  # 调试输出 被动接收对象
             print("来自好友的消息：", self.Content)  # 调试输出 解码后的信息正文
             return self.Mpq_ret("0")
-        elif (self.MsgType == "2" and self.Source == "561024983"):
+        elif (self.MsgType == "2" and self.Source == "5683"):
             print('Robot：', self.Robot)  # 调试输出 机器人QQ
             print('MsgType：', self.MsgType)  # 调试输出 信息类型
             print('Source：', self.Source)  # 调试输出 信息来源
